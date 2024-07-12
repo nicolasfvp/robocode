@@ -5,93 +5,62 @@ import java.awt.Color;
 import static robocode.util.Utils.normalRelativeAngleDegrees;
 
 public class Moskitao extends AdvancedRobot
-{
-    boolean movingForward;
-    /**
-     */
+
+    @Override
     public void run() {
-   	 // Initialization of the robot should be put here
+        while (true) {
+            // Move-se aleatoriamente para evitar ficar parado
+            setAhead(100);
+            setTurnRight(90);
 
-   	 // After trying out your robot, try uncommenting the import at the top,
-   	 // and the next line:
-
-   	 // setColors(Color.red,Color.blue,Color.green); // body,gun,radar
-    	setColors(Color.green,Color.blue,Color.green);
-   	 // Robot main loop
-   	 while(true) {
-   		 // Replace the next 4 lines with any behavior you would like
-   		 setAhead(20000);
-   		 movingForward = true;
-   		 setTurnRight(80);
-   		 waitFor(new TurnCompleteCondition(this));
-   		 setTurnLeft(90);
-   		 turnGunRight(180);
-   		 waitFor(new TurnCompleteCondition(this));
-   		 setTurnRight(90);
-   		 turnGunRight(180);
-   		 
-   	 }
+            // Espera um pouco antes de realizar a próxima ação
+            execute();
+            waitFor(new TurnCompleteCondition(this));
+        }
     }
 
-    /**
-     * onScannedRobot: What to do when you see another robot
-     */
-    public void onScannedRobot(ScannedRobotEvent e) {
-   	 // Replace the next line with any behavior you would like
-	 
-   	 double absoluteBearing = getHeading() + e.getBearing();
-   	 double bearingFromGun = normalRelativeAngleDegrees(absoluteBearing - getGunHeading());
-   	 
-    if (Math.abs(bearingFromGun) <= 3) {
-   		 turnGunRight(bearingFromGun);
-   		 // We check gun heat here, because calling fire()
-   		 // uses a turn, which could cause us to lose track
-   		 // of the other robot.
-   		 if (getGunHeat() == 0) {
-   			 fire(Math.min(3 - Math.abs(bearingFromGun), getEnergy() - .1));
-   		 }
-   	 }
-   		 else {
-   		 turnGunRight(bearingFromGun);
-   	 }
-   	 if (bearingFromGun == 0) {
-   		 scan();
-   	 }
+    @Override
+    public void onScannedBullet(ScannedBulletEvent event) {
+        // Acessa a bala inimiga detectada
+        Bullet bullet = event.getBullet();
+
+        // Obtém informações da bala inimiga
+        double enemyBulletHeading = bullet.getHeading();
+        double enemyBulletVelocity = bullet.getVelocity();
+        double enemyBulletX = bullet.getX();
+        double enemyBulletY = bullet.getY();
+
+        // Calcula a distância entre o robô e a bala inimiga
+        double dx = enemyBulletX - getX();
+        double dy = enemyBulletY - getY();
+        double distanceToBullet = Math.sqrt(dx * dx + dy * dy);
+
+        // Calcula o tempo até o impacto da bala
+        double timeToImpact = distanceToBullet / enemyBulletVelocity;
+
+        // Calcula a posição futura da bala
+        double futureBulletX = enemyBulletX + enemyBulletVelocity * timeToImpact * Math.sin(Math.toRadians(enemyBulletHeading));
+        double futureBulletY = enemyBulletY + enemyBulletVelocity * timeToImpact * Math.cos(Math.toRadians(enemyBulletHeading));
+
+        // Calcula a posição segura para se mover (move-se na direção oposta)
+        double safeX = getX() + (getX() - futureBulletX);
+        double safeY = getY() + (getY() - futureBulletY);
+
+        // Move o robô para a posição segura
+        goTo(safeX, safeY);
     }
 
-    /**
-     * onHitByBullet: What to do when you're hit by a bullet
-     */
-//    public void onHitByBullet(HitByBulletEvent e) {
-   	 // Replace the next line with any behavior you would like
-   	 //back(100);
-   	 //setTurnLeft(90);
-    //}
-    
-    /**
-     * onHitWall: What to do when you hit a wall
-     */
-    public void onHitWall(HitWallEvent e) {
-   	 // Replace the next line with any behavior you would like
-   	 reverseDirection();
-    }    
-   	 public void reverseDirection() {
-   	 if (movingForward) {
-   		 setBack(20000);
-   		 movingForward = false;
-   	 } else {
-   		 setAhead(20000);
-   		 movingForward = true;
-   	 }
-    }
-   	 public void onHitRobot(HitRobotEvent e) {
-   	 // If we're moving the other robot, reverse!
-   	 if (e.isMyFault()) {
-   		 reverseDirection();
-   	 }
-    }
-   	 public void onWin(WinEvent e) {
-   	 // Victory dance
-   	 turnRight(36000);
+    public void goTo(double x, double y) {
+        // Calcula a distância e o ângulo para a posição x, y
+        double dx = x - getX();
+        double dy = y - getY();
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        double angle = Utils.normalRelativeAngleDegrees(Math.toDegrees(Math.atan2(dx, dy)) - getHeading());
+
+        // Vira o robô para o ângulo desejado
+        setTurnRight(angle);
+
+        // Move o robô para a posição
+        setAhead(distance);
     }
 }
