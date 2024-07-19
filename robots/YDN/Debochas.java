@@ -49,12 +49,11 @@ public class Debochas extends AdvancedRobot {
 		moveDirection=-moveDirection;//quando bater na parede, volta pra direção inversa
 	}
 
-	public void dancinha(WinEvent e) { //dancinha da vitoria fdskkkkk
+	public void onWin(WinEvent e) {
 		for (int i = 0; i < 50; i++) {
-			while(true){
-				turnRight(30);
-				turnLeft(30);
-			}
+			turnRight(30);
+			turnLeft(30);
+			ahead(10);
 		}
 	}
 }
