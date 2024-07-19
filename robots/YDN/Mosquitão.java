@@ -96,7 +96,9 @@ public class Mosquitão extends AdvancedRobot
    	 }
     }
    	 public void onWin(WinEvent e) {
-   	 // Victory dance
-   	 turnRight(36000);
-    }
+		for (int i = 0; i < 50; i++) {
+			turnRight(30);
+			turnLeft(30);
+		}
+	}
 }
