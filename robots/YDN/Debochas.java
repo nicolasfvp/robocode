@@ -24,7 +24,15 @@ public class Debochas extends AdvancedRobot {
 		double absBearing=e.getBearingRadians()+getHeadingRadians();//angulo do inimigo
 		double latVel=e.getVelocity() * Math.sin(e.getHeadingRadians() -absBearing);//velocidade do inimigo
 		double gunTurnAmt;//quanto virar a arma
+		double intensidade = 3; 
 		setTurnRadarLeftRadians(getRadarTurnRemainingRadians());//trava o radar
+		if (e.getDistance() > 900){
+	        intensidade = 1;
+		} else if (e.getDistance() > 450) {
+			intensidade = 2;
+		} else {
+			intensidade = 3; 
+		} 
 		if(Math.random()>.9){
 			setMaxVelocity((12*Math.random())+12);//varia velocidade nossa
 		}
@@ -41,7 +49,7 @@ public class Debochas extends AdvancedRobot {
 			setTurnGunRightRadians(gunTurnAmt);
 			setTurnLeft(-90-e.getBearing()); //da uma viradinha engana trouxa
 			setAhead((e.getDistance() - 140)*moveDirection);
-			setFire(3);
+			setFire(intensidade);
 		}	
 	}
 
