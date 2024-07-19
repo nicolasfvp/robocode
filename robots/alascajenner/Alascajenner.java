@@ -16,9 +16,9 @@ public class Alascajenner extends AdvancedRobot {
         setAdjustRadarForRobotTurn(true);
         
         while(true) {
-            setAhead(100); // Move para frente
-            setTurnRightRadians(Math.PI/2); // Vira 90 graus para a direita
-            execute(); // Executa as ações pendentes
+            setAhead(100); 
+            setTurnRightRadians(Math.PI/2);
+            execute(); 
         }
     }
     
@@ -38,7 +38,7 @@ public class Alascajenner extends AdvancedRobot {
         double predictedX = enemyX + Math.sin(enemyHeading) * enemyVelocity;
         double predictedY = enemyY + Math.cos(enemyHeading) * enemyVelocity;
         
-        // Limita as coordenadas dentro do campo de batalha
+       
         predictedX = Math.max(18.0, Math.min(predictedX, battlefieldWidth - 18.0));
         predictedY = Math.max(18.0, Math.min(predictedY, battlefieldHeight - 18.0));
         
@@ -57,12 +57,14 @@ public class Alascajenner extends AdvancedRobot {
     }
     
     public void onHitWall(HitWallEvent e) {
-        back(20);
+        back(140);
     }
     
     private double normalizeBearing(double angle) {
-        while (angle > 180) angle -= 360;
-        while (angle < -180) angle += 360;
-        return angle;
+        while ( true ) {
+			ahead (120);
+			turnGunRight(360);
+		}
+
     }   
 }
