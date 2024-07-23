@@ -4,6 +4,12 @@ import java.awt.geom.Point2D;
 import robocode.*;
 import robocode.util.Utils;
 
+//Robo baseado no sample Tracker, com ideia de movimentação baseada na estratégia de 
+//Ram (travar em um alvo e seguir ele), com implementação básica de previsão de pos-
+//ição futura (ainda bem falha se o inimigo está "fugindo" e completamente quebrada
+//se o inimigo ficar parado). Escolha de inimigos ainda defeituosa quando em batalhas
+//com multíplos inimigos. Salvo a dizer sua velocidade inconstante para inimigos com
+//lógicas de previsão semelhantes
 
 public class Debochas extends AdvancedRobot {
 	int moveDirection=1;
